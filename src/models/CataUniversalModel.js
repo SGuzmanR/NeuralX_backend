@@ -1,70 +1,85 @@
 import connectDatabase from '../conexion/index.js';
 
 const connection = connectDatabase();
-const CataUniversal = {};
+const CatalogoUniversal = {};
 
 // Obtener todos los registros
-CataUniversal.getAllUCatalog = (callback) => {
-  if (connection) {
-    let sql = `
-      SELECT 
-        idCatalogo, 
-        tipoCatalogo, 
-        denominacionCatalogo
-      FROM catalogouniversal
-      ORDER BY denominacionCatalogo;
-    `;
-
-    connection.query(sql, (error, rows) => {
-      if (error) {
-        throw error;
-      } else {
-        callback(null, rows); // Convierte las filas JSON a una cadena de texto para Angular
-      };
+CatalogoUniversal.getAll = () => {
+  const sql = `
+    SELECT idCatalogo, tipoCatalogo, denominacionCatalogo
+    FROM catalogouniversal
+    ORDER BY denominacionCatalogo;
+  `;
+  return new Promise((resolve, reject) => {
+    connection.query(sql, (error, results) => {
+      if (error) return reject(error);
+      resolve(results);
     });
-  };
+  });
 };
 
-//
-CataUniversal.getTypeUCatalog = (callback) => {
-  if (connection) {
-    let sql = `
-      SELECT 
-        idCatalogo, 
-        tipoCatalogo, 
-        denominacionCatalogo
-      FROM catalogouniversal
-      ORDER BY denominacionCatalogo;
-    `;
-
-    connection.query(sql, (error, rows) => {
-      if (error) {
-        throw error;
-      } else {
-        callback(null, rows); // Convierte las filas JSON a una cadena de texto para Angular
-      };
+// Obtener registros por tipo de catálogo
+CatalogoUniversal.getByType = (type) => {
+  const sql = `
+    SELECT idCatalogo, tipoCatalogo, denominacionCatalogo
+    FROM catalogouniversal
+    WHERE tipoCatalogo = ?
+    ORDER BY denominacionCatalogo;
+  `;
+  return new Promise((resolve, reject) => {
+    connection.query(sql, [type], (error, results) => {
+      if (error) return reject(error);
+      resolve(results);
     });
-  };
+  });
 };
 
-// Modificar un registro del Catalogo Universal
-CataUniversal.updateUCatalog = (data, callback) => {
-  if (connection) {
-    let sql = `
-      UPDATE catalogouniversal SET
-        tipoCatalogo = ${connection.escape(data.tipoCatalogo)}, 
-        denominacionCatalogo = ${connection.escape(data.denominacionCatalogo)}
-      WHERE idCatalogo = ${connection.escape(data.idCatalogo)};
-    `;
-
-    connection.query(sql, (error, rows) => {
-      if (error) {
-        throw error;
-      } else {
-        callback(null, { 'msg': 'Se modifico el Registro en Catalogo Universal' });
-      };
+// Obtener registro por ID
+CatalogoUniversal.getById = (id) => {
+  const sql = `
+    SELECT idCatalogo, tipoCatalogo, denominacionCatalogo
+    FROM catalogouniversal
+    WHERE idCatalogo = ?;
+  `;
+  return new Promise((resolve, reject) => {
+    connection.query(sql, [id], (error, results) => {
+      if (error) return reject(error);
+      resolve(results[0] || null); // Devuelve null si no existe
     });
-  };
+  });
 };
 
-export default CataUniversal;
+// Crear un nuevo registro
+CatalogoUniversal.create = (data) => {
+  const sql = `
+    INSERT INTO catalogouniversal (tipoCatalogo, denominacionCatalogo)
+    VALUES (?, ?);
+  `;
+  const values = [data.tipoCatalogo, data.denominacionCatalogo];
+
+  return new Promise((resolve, reject) => {
+    connection.query(sql, values, (error, result) => {
+      if (error) return reject(error);
+      resolve({ idCatalogo: result.insertId, ...data });
+    });
+  });
+};
+
+// Actualizar un registro
+CatalogoUniversal.update = (data) => {
+  const sql = `
+    UPDATE catalogouniversal
+    SET tipoCatalogo = ?, denominacionCatalogo = ?
+    WHERE idCatalogo = ?;
+  `;
+  const values = [data.tipoCatalogo, data.denominacionCatalogo, data.idCatalogo];
+
+  return new Promise((resolve, reject) => {
+    connection.query(sql, values, (error, result) => {
+      if (error) return reject(error);
+      resolve({ msg: 'Registro actualizado correctamente', affectedRows: result.affectedRows });
+    });
+  });
+};
+
+export default CatalogoUniversal;
