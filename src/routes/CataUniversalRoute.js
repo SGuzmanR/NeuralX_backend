@@ -56,10 +56,17 @@ router.post('/', async (req, res) => {
 });
 
 // Actualizar un registro
-router.put('/', async (req, res) => {
-  const { idCatalogo, tipoCatalogo, denominacionCatalogo } = req.body;
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { tipoCatalogo, denominacionCatalogo } = req.body;
+
   try {
-    const result = await CatalogoUniversal.update({ idCatalogo, tipoCatalogo, denominacionCatalogo });
+    const result = await CatalogoUniversal.update({
+      idCatalogo: id,
+      tipoCatalogo,
+      denominacionCatalogo
+    });
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ msg: 'Registro no encontrado para actualizar' });
     }

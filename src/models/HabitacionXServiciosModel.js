@@ -3,43 +3,90 @@ import connectDatabase from '../conexion/index.js';
 const connection = connectDatabase();
 const HabitacionXServicios = {};
 
-// Obtener todos los servicios por habitación
-HabitacionXServicios.getAll = (callback) => {
-  if (connection) {
-    const sql = `
-      SELECT 
-        IdServicioHabitacion,
-        idHabitacion,
-        idServicio,
-        cantidad
-      FROM habitacionXservicios;
-    `;
-    connection.query(sql, (error, rows) => {
-      if (error) throw error;
-      callback(null, rows);
+// Obtener todos los HabitacionesXServicio
+HabitacionXServicios.getAll = () => {
+  const sql = `
+    SELECT 
+      IdServicioHabitacion,
+      idHabitacion,
+      idServicio,
+      cantidad
+    FROM habitacionXservicios;
+  `;
+
+  return new Promise((resolve, reject) => {
+    connection.query(sql, (error, results) => {
+      if (error) return reject(error);
+      resolve(results);
     });
-  }
+  });
 };
 
-// Crear una relación habitación-servicio
-HabitacionXServicios.create = (data, callback) => {
-  if (connection) {
-    const sql = `
-      INSERT INTO habitacionXservicios (
-        idHabitacion,
-        idServicio,
-        cantidad
-      ) VALUES (
-        ${connection.escape(data.idHabitacion)},
-        ${connection.escape(data.idServicio)},
-        ${connection.escape(data.cantidad)}
-      );
-    `;
-    connection.query(sql, (error, result) => {
-      if (error) throw error;
-      callback(null, { id: result.insertId, ...data });
+// Obtener HabitacionesXServicio por ID
+HabitacionXServicios.getById = (id) => {
+  const sql = `
+    SELECT 
+      IdServicioHabitacion,
+      idHabitacion,
+      idServicio,
+      cantidad
+    FROM habitacionXservicios
+    WHERE IdServicioHabitacion = ?;
+  `;
+
+  return new Promise((resolve, reject) => {
+    connection.query(sql, [id], (error, results) => {
+      if (error) return reject(error);
+      resolve(results[0] || null); // Retorna null si no encuentra nada
     });
-  }
+  });
+};
+
+// Crear un HabitacionesXServicio
+HabitacionXServicios.create = (data) => {
+  const sql = `
+    INSERT INTO habitacionXservicios (
+      idHabitacion,
+      idServicio,
+      cantidad
+    ) VALUES (?, ?, ?);
+  `;
+
+  const values = [
+    data.idHabitacion,
+    data.idServicio,
+    data.cantidad
+  ];
+
+  return new Promise((resolve, reject) => {
+    connection.query(sql, values, (error, result) => {
+      if (error) return reject(error);
+      resolve({ id: result.insertId, ...data });
+    });
+  });
+};
+
+// Actualizar un HabitacionesXServicio
+HabitacionXServicios.update = (id, data) => {
+  const sql = `
+    UPDATE habitacionXservicios
+    SET idHabitacion = ?, idServicio = ?, cantidad = ?
+    WHERE IdServicioHabitacion = ?;
+  `;
+
+  const values = [
+    data.idHabitacion,
+    data.idServicio,
+    data.cantidad,
+    id
+  ];
+
+  return new Promise((resolve, reject) => {
+    connection.query(sql, values, (error, result) => {
+      if (error) return reject(error);
+      resolve({ msg: 'Registro actualizado correctamente', affectedRows: result.affectedRows });
+    });
+  });
 };
 
 export default HabitacionXServicios;
