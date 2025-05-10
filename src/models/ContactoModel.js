@@ -12,11 +12,11 @@ Contacto.getAll = () => {
     c.datoContacto,
     tipo.denominacionCatalogo AS tipoContacto
     FROM 
-        contacto c
+      contacto c
     LEFT JOIN 
-        catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
+      catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
     ORDER BY 
-        c.idContacto;
+      c.idContacto;
   `;
 
   return new Promise((resolve, reject) => {

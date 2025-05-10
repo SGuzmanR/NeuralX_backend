@@ -354,22 +354,184 @@ SET FOREIGN_KEY_CHECKS=1;
 
 
 
--- QUERIES TEST
+-- HUESPED
+-- ALL
 SELECT 
-    h.primerNombre, 
-    h.segundoNombre, 
-    h.primerApellido, 
-    h.segundoApellido, 
-    doc.denominacionCatalogo AS tipoDocumento, 
-    h.numeroDocumento, 
-    h.fechaNacimiento, 
-    gen.denominacionCatalogo AS generoHuesped, 
-    nac.denominacionCatalogo AS nacionalidadHuesped
+  h.idHuesped,
+  h.primerNombre, 
+  h.segundoNombre, 
+  h.primerApellido, 
+  h.segundoApellido, 
+  doc.denominacionCatalogo AS tipoDocumento, 
+  h.numeroDocumento, 
+  h.fechaNacimiento, 
+  gen.denominacionCatalogo AS generoHuesped, 
+  nac.denominacionCatalogo AS nacionalidadHuesped
 FROM 
-    huesped h
-INNER JOIN 
-    catalogoUniversal doc ON h.tipoDocumento = doc.idCatalogo
-INNER JOIN 
-    catalogoUniversal gen ON h.generoHuesped = gen.idCatalogo
-INNER JOIN 
-    catalogoUniversal nac ON h.nacionalidadHuesped = nac.idCatalogo;
+  huesped h
+INNER JOIN catalogoUniversal doc ON h.tipoDocumento = doc.idCatalogo
+INNER JOIN catalogoUniversal gen ON h.generoHuesped = gen.idCatalogo
+INNER JOIN catalogoUniversal nac ON h.nacionalidadHuesped = nac.idCatalogo
+ORDER BY h.primerApellido, h.primerNombre;
+-- ID
+SELECT 
+  h.idHuesped,
+  h.primerNombre, 
+  h.segundoNombre, 
+  h.primerApellido, 
+  h.segundoApellido, 
+  doc.denominacionCatalogo AS tipoDocumento, 
+  h.numeroDocumento, 
+  h.fechaNacimiento, 
+  gen.denominacionCatalogo AS generoHuesped, 
+  nac.denominacionCatalogo AS nacionalidadHuesped
+FROM 
+  huesped h
+INNER JOIN catalogoUniversal doc ON h.tipoDocumento = doc.idCatalogo
+INNER JOIN catalogoUniversal gen ON h.generoHuesped = gen.idCatalogo
+INNER JOIN catalogoUniversal nac ON h.nacionalidadHuesped = nac.idCatalogo
+WHERE 
+  h.idHuesped = ?;
+
+-- RESERVA
+-- ALL
+SELECT 
+  r.idReserva,
+  CONCAT(h.primerNombre, ' ', h.segundoNombre, ' ', h.primerApellido, ' ', h.segundoApellido) AS nombreHuesped,
+  hab.numeroHabitacion,
+  r.fechaReserva,
+  r.fechaEntrada,
+  r.fechaSalida,
+  estado.denominacionCatalogo AS estadoReserva
+FROM 
+  reserva r
+INNER JOIN huesped h ON r.idHuesped = h.idHuesped
+INNER JOIN habitacion hab ON r.idHabitacion = hab.idHabitacion
+INNER JOIN catalogoUniversal estado ON r.estadoReserva = estado.idCatalogo
+ORDER BY r.fechaReserva DESC;
+-- ID
+SELECT 
+  r.idReserva,
+  CONCAT(h.primerNombre, ' ', h.segundoNombre, ' ', h.primerApellido, ' ', h.segundoApellido) AS nombreHuesped,
+  hab.numeroHabitacion,
+  r.fechaReserva,
+  r.fechaEntrada,
+  r.fechaSalida,
+  estado.denominacionCatalogo AS estadoReserva
+FROM 
+  reserva r
+INNER JOIN huesped h ON r.idHuesped = h.idHuesped
+INNER JOIN habitacion hab ON r.idHabitacion = hab.idHabitacion
+INNER JOIN catalogoUniversal estado ON r.estadoReserva = estado.idCatalogo
+WHERE r.idReserva = ?;
+
+-- SERVICIO
+-- ALL
+SELECT 
+  s.idServicio,
+  s.nombreServicio,
+  s.descripcionServicio,
+  tipo.denominacionCatalogo AS tipoServicio,
+  clase.denominacionCatalogo AS claseServicio,
+  pago.denominacionCatalogo AS modoPagoServicio,
+  s.precioServicio
+FROM servicio s
+INNER JOIN catalogoUniversal tipo ON s.tipoServicio = tipo.idCatalogo
+INNER JOIN catalogoUniversal clase ON s.claseServicio = clase.idCatalogo
+INNER JOIN catalogoUniversal pago ON s.modoPagoServicio = pago.idCatalogo
+ORDER BY s.nombreServicio;
+-- ID
+SELECT 
+  s.idServicio,
+  s.nombreServicio,
+  s.descripcionServicio,
+  tipo.denominacionCatalogo AS tipoServicio,
+  clase.denominacionCatalogo AS claseServicio,
+  pago.denominacionCatalogo AS modoPagoServicio,
+  s.precioServicio
+FROM servicio s
+INNER JOIN catalogoUniversal tipo ON s.tipoServicio = tipo.idCatalogo
+INNER JOIN catalogoUniversal clase ON s.claseServicio = clase.idCatalogo
+INNER JOIN catalogoUniversal pago ON s.modoPagoServicio = pago.idCatalogo
+WHERE s.idServicio = ?;
+
+-- HABITACIONXSERVICIOS
+-- ALL
+SELECT 
+  hxs.IdServicioHabitacion,
+  hxs.idHabitacion,
+  hxs.idServicio,
+  hxs.cantidad,
+  hab.numeroHabitacion,
+  ser.nombreServicio
+FROM habitacionXservicios hxs
+INNER JOIN habitacion hab ON hxs.idHabitacion = hab.idHabitacion
+INNER JOIN servicio ser ON hxs.idServicio = ser.idServicio
+ORDER BY hxs.IdServicioHabitacion;
+-- ID
+SELECT 
+  hxs.IdServicioHabitacion,
+  hxs.idHabitacion,
+  hxs.idServicio,
+  hxs.cantidad,
+  hab.numeroHabitacion,
+  ser.nombreServicio
+FROM habitacionXservicios hxs
+INNER JOIN habitacion hab ON hxs.idHabitacion = hab.idHabitacion
+INNER JOIN servicio ser ON hxs.idServicio = ser.idServicio
+WHERE hxs.IdServicioHabitacion = ?;
+
+-- HABITACION
+-- ALL
+SELECT 
+  h.idHabitacion,
+  h.numeroHabitacion,
+  tipo.denominacionCatalogo AS tipoHabitacion,
+  h.descripcionHabitacion,
+  capacidad.denominacionCatalogo AS capacidadHabitacion,
+  h.precioHabitacion,
+  zona.denominacionCatalogo AS zonaHabitacion,
+  h.disponibilidadHabitacion
+FROM habitacion h
+INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
+INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
+INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
+ORDER BY h.numeroHabitacion;
+-- ID
+SELECT 
+  h.idHabitacion,
+  h.numeroHabitacion,
+  tipo.denominacionCatalogo AS tipoHabitacion,
+  h.descripcionHabitacion,
+  capacidad.denominacionCatalogo AS capacidadHabitacion,
+  h.precioHabitacion,
+  zona.denominacionCatalogo AS zonaHabitacion,
+  h.disponibilidadHabitacion
+FROM habitacion h
+INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
+INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
+INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
+WHERE h.idHabitacion = ?;
+
+-- CONTACTO
+-- ALL
+SELECT 
+  c.idContacto,
+  c.huespedContacto,
+  c.datoContacto,
+  tipo.denominacionCatalogo AS tipoContacto
+FROM 
+  contacto c
+LEFT JOIN 
+  catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
+ORDER BY 
+  c.idContacto;
+-- ID
+SELECT 
+  c.idContacto,
+  c.huespedContacto,
+  c.datoContacto,
+  tipo.denominacionCatalogo AS tipoContacto
+FROM contacto c
+INNER JOIN catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
+WHERE c.idContacto = ?;
