@@ -7,11 +7,16 @@ const HabitacionXServicios = {};
 HabitacionXServicios.getAll = () => {
   const sql = `
     SELECT 
-      IdServicioHabitacion,
-      idHabitacion,
-      idServicio,
-      cantidad
-    FROM habitacionXservicios;
+      hxs.IdServicioHabitacion,
+      hxs.idHabitacion,
+      hxs.idServicio,
+      hxs.cantidad,
+      hab.numeroHabitacion,
+      ser.nombreServicio
+    FROM habitacionXservicios hxs
+    INNER JOIN habitacion hab ON hxs.idHabitacion = hab.idHabitacion
+    INNER JOIN servicio ser ON hxs.idServicio = ser.idServicio
+    ORDER BY hxs.IdServicioHabitacion;
   `;
 
   return new Promise((resolve, reject) => {
@@ -26,12 +31,16 @@ HabitacionXServicios.getAll = () => {
 HabitacionXServicios.getById = (id) => {
   const sql = `
     SELECT 
-      IdServicioHabitacion,
-      idHabitacion,
-      idServicio,
-      cantidad
-    FROM habitacionXservicios
-    WHERE IdServicioHabitacion = ?;
+      hxs.IdServicioHabitacion,
+      hxs.idHabitacion,
+      hxs.idServicio,
+      hxs.cantidad,
+      hab.numeroHabitacion,
+      ser.nombreServicio
+    FROM habitacionXservicios hxs
+    INNER JOIN habitacion hab ON hxs.idHabitacion = hab.idHabitacion
+    INNER JOIN servicio ser ON hxs.idServicio = ser.idServicio
+    WHERE hxs.IdServicioHabitacion = ?;
   `;
 
   return new Promise((resolve, reject) => {

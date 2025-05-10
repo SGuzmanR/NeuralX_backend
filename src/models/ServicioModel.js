@@ -6,10 +6,21 @@ const Servicio = {};
 // Obtener todos los servicios
 Servicio.getAll = () => {
   const sql = `
-    SELECT idServicio, nombreServicio, descripcionServicio
-    FROM servicio
-    ORDER BY nombreServicio;
+    SELECT 
+      s.idServicio,
+      s.nombreServicio,
+      s.descripcionServicio,
+      tipo.denominacionCatalogo AS tipoServicio,
+      clase.denominacionCatalogo AS claseServicio,
+      pago.denominacionCatalogo AS modoPagoServicio,
+      s.precioServicio
+    FROM servicio s
+    INNER JOIN catalogoUniversal tipo ON s.tipoServicio = tipo.idCatalogo
+    INNER JOIN catalogoUniversal clase ON s.claseServicio = clase.idCatalogo
+    INNER JOIN catalogoUniversal pago ON s.modoPagoServicio = pago.idCatalogo
+    ORDER BY s.nombreServicio;
   `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, (error, results) => {
       if (error) return reject(error);
@@ -21,10 +32,21 @@ Servicio.getAll = () => {
 // Obtener servicio por ID
 Servicio.getById = (id) => {
   const sql = `
-    SELECT idServicio, nombreServicio, descripcionServicio
-    FROM servicio
-    WHERE idServicio = ?;
+    SELECT 
+      s.idServicio,
+      s.nombreServicio,
+      s.descripcionServicio,
+      tipo.denominacionCatalogo AS tipoServicio,
+      clase.denominacionCatalogo AS claseServicio,
+      pago.denominacionCatalogo AS modoPagoServicio,
+      s.precioServicio
+    FROM servicio s
+    INNER JOIN catalogoUniversal tipo ON s.tipoServicio = tipo.idCatalogo
+    INNER JOIN catalogoUniversal clase ON s.claseServicio = clase.idCatalogo
+    INNER JOIN catalogoUniversal pago ON s.modoPagoServicio = pago.idCatalogo
+    WHERE s.idServicio = ?;
   `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, [id], (error, results) => {
       if (error) return reject(error);
@@ -39,6 +61,7 @@ Servicio.create = (data) => {
     INSERT INTO servicio (nombreServicio, descripcionServicio)
     VALUES (?, ?);
   `;
+
   const values = [data.nombreServicio, data.descripcionServicio];
 
   return new Promise((resolve, reject) => {
@@ -56,6 +79,7 @@ Servicio.update = (id, data) => {
     SET nombreServicio = ?, descripcionServicio = ?
     WHERE idServicio = ?;
   `;
+
   const values = [data.nombreServicio, data.descripcionServicio, id];
 
   return new Promise((resolve, reject) => {

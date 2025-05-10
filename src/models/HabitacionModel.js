@@ -7,16 +7,19 @@ const Habitacion = {};
 Habitacion.getAll = () => {
   const sql = `
     SELECT 
-      idHabitacion,
-      numeroHabitacion,
-      tipoHabitacion,
-      descripcionHabitacion,
-      capacidadHabitacion,
-      precioHabitacion,
-      zonaHabitacion,
-      disponibilidadHabitacion
-    FROM habitacion
-    ORDER BY numeroHabitacion;
+      h.idHabitacion,
+      h.numeroHabitacion,
+      tipo.denominacionCatalogo AS tipoHabitacion,
+      h.descripcionHabitacion,
+      capacidad.denominacionCatalogo AS capacidadHabitacion,
+      h.precioHabitacion,
+      zona.denominacionCatalogo AS zonaHabitacion,
+      h.disponibilidadHabitacion
+    FROM habitacion h
+    INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
+    INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
+    INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
+    ORDER BY h.numeroHabitacion;
   `;
 
   return new Promise((resolve, reject) => {
@@ -31,16 +34,19 @@ Habitacion.getAll = () => {
 Habitacion.getById = (id) => {
   const sql = `
     SELECT 
-      idHabitacion,
-      numeroHabitacion,
-      tipoHabitacion,
-      descripcionHabitacion,
-      capacidadHabitacion,
-      precioHabitacion,
-      zonaHabitacion,
-      disponibilidadHabitacion
-    FROM habitacion
-    WHERE idHabitacion = ?;
+      h.idHabitacion,
+      h.numeroHabitacion,
+      tipo.denominacionCatalogo AS tipoHabitacion,
+      h.descripcionHabitacion,
+      capacidad.denominacionCatalogo AS capacidadHabitacion,
+      h.precioHabitacion,
+      zona.denominacionCatalogo AS zonaHabitacion,
+      h.disponibilidadHabitacion
+    FROM habitacion h
+    INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
+    INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
+    INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
+    WHERE h.idHabitacion = ?;
   `;
 
   return new Promise((resolve, reject) => {

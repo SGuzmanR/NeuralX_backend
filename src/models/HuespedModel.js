@@ -5,10 +5,26 @@ const Huesped = {};
 
 // Obtener todos los huéspedes
 Huesped.getAll = () => {
-  const sql = `
-    SELECT * FROM huesped
-    ORDER BY primerApellido, primerNombre;
+   const sql = `
+    SELECT 
+      h.idHuesped,
+      h.primerNombre, 
+      h.segundoNombre, 
+      h.primerApellido, 
+      h.segundoApellido, 
+      doc.denominacionCatalogo AS tipoDocumento, 
+      h.numeroDocumento, 
+      h.fechaNacimiento, 
+      gen.denominacionCatalogo AS generoHuesped, 
+      nac.denominacionCatalogo AS nacionalidadHuesped
+    FROM 
+      huesped h
+    INNER JOIN catalogoUniversal doc ON h.tipoDocumento = doc.idCatalogo
+    INNER JOIN catalogoUniversal gen ON h.generoHuesped = gen.idCatalogo
+    INNER JOIN catalogoUniversal nac ON h.nacionalidadHuesped = nac.idCatalogo
+    ORDER BY h.primerApellido, h.primerNombre;
   `;
+  
   return new Promise((resolve, reject) => {
     connection.query(sql, (error, rows) => {
       if (error) return reject(error);
@@ -20,9 +36,26 @@ Huesped.getAll = () => {
 // Obtener huésped por ID
 Huesped.getById = (id) => {
   const sql = `
-    SELECT * FROM huesped
-    WHERE idHuesped = ?;
+    SELECT 
+      h.idHuesped,
+      h.primerNombre, 
+      h.segundoNombre, 
+      h.primerApellido, 
+      h.segundoApellido, 
+      doc.denominacionCatalogo AS tipoDocumento, 
+      h.numeroDocumento, 
+      h.fechaNacimiento, 
+      gen.denominacionCatalogo AS generoHuesped, 
+      nac.denominacionCatalogo AS nacionalidadHuesped
+    FROM 
+      huesped h
+    INNER JOIN catalogoUniversal doc ON h.tipoDocumento = doc.idCatalogo
+    INNER JOIN catalogoUniversal gen ON h.generoHuesped = gen.idCatalogo
+    INNER JOIN catalogoUniversal nac ON h.nacionalidadHuesped = nac.idCatalogo
+    WHERE 
+      h.idHuesped = ?;
   `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, [id], (error, rows) => {
       if (error) return reject(error);
@@ -40,6 +73,7 @@ Huesped.create = (data) => {
       generoHuesped, nacionalidadHuesped
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
   `;
+
   const values = [
     data.primerNombre,
     data.segundoNombre,
@@ -69,6 +103,7 @@ Huesped.update = (data) => {
       generoHuesped = ?, nacionalidadHuesped = ?
     WHERE idHuesped = ?;
   `;
+
   const values = [
     data.primerNombre,
     data.segundoNombre,

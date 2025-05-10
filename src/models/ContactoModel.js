@@ -5,7 +5,19 @@ const Contacto = {};
 
 // Obtener todos los contactos
 Contacto.getAll = () => {
-  const sql = `SELECT * FROM contacto;`;
+   const sql = `
+    SELECT 
+    c.idContacto,
+    c.huespedContacto,
+    c.datoContacto,
+    tipo.denominacionCatalogo AS tipoContacto
+    FROM 
+        contacto c
+    LEFT JOIN 
+        catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
+    ORDER BY 
+        c.idContacto;
+  `;
 
   return new Promise((resolve, reject) => {
     connection.query(sql, (error, results) => {
@@ -18,8 +30,14 @@ Contacto.getAll = () => {
 // Obtener contacto por ID
 Contacto.getById = (id) => {
   const sql = `
-    SELECT * FROM contacto
-    WHERE idContacto = ?;
+    SELECT 
+      c.idContacto,
+      c.huespedContacto,
+      c.datoContacto,
+      tipo.denominacionCatalogo AS tipoContacto
+    FROM contacto c
+    INNER JOIN catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
+    WHERE c.idContacto = ?;
   `;
 
   return new Promise((resolve, reject) => {

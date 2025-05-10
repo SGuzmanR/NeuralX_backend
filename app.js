@@ -52,7 +52,7 @@ app.use('/Contacto', ContactoRoute);
 // MIDDLEWARE ERROR HANDLING
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!', error: err.message });
+  res.status(500).json({ message: 'Algo salio mal!', error: err.message });
 });
 
 // START SERVER

@@ -354,6 +354,7 @@ SET FOREIGN_KEY_CHECKS=1;
 
 
 
+-- QUERIES TEST
 SELECT 
     h.primerNombre, 
     h.segundoNombre, 

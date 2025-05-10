@@ -5,7 +5,23 @@ const Reserva = {};
 
 // Obtener todos las Reservas
 Reserva.getAll = () => {
-  const sql = 'SELECT * FROM reserva ORDER BY fechaReserva DESC';
+  const sql = `
+    SELECT 
+      r.idReserva,
+      CONCAT(h.primerNombre, ' ', h.segundoNombre, ' ', h.primerApellido, ' ', h.segundoApellido) AS nombreHuesped,
+      hab.numeroHabitacion,
+      r.fechaReserva,
+      r.fechaEntrada,
+      r.fechaSalida,
+      estado.denominacionCatalogo AS estadoReserva
+    FROM 
+      reserva r
+    INNER JOIN huesped h ON r.idHuesped = h.idHuesped
+    INNER JOIN habitacion hab ON r.idHabitacion = hab.idHabitacion
+    INNER JOIN catalogoUniversal estado ON r.estadoReserva = estado.idCatalogo
+    ORDER BY r.fechaReserva DESC;
+  `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, (error, rows) => {
       if (error) return reject(error);
@@ -16,7 +32,23 @@ Reserva.getAll = () => {
 
 // Obtener reserva por ID
 Reserva.getById = (id) => {
-  const sql = 'SELECT * FROM reserva WHERE idReserva = ?';
+  const sql = `
+    SELECT 
+      r.idReserva,
+      CONCAT(h.primerNombre, ' ', h.segundoNombre, ' ', h.primerApellido, ' ', h.segundoApellido) AS nombreHuesped,
+      hab.numeroHabitacion,
+      r.fechaReserva,
+      r.fechaEntrada,
+      r.fechaSalida,
+      estado.denominacionCatalogo AS estadoReserva
+    FROM 
+      reserva r
+    INNER JOIN huesped h ON r.idHuesped = h.idHuesped
+    INNER JOIN habitacion hab ON r.idHabitacion = hab.idHabitacion
+    INNER JOIN catalogoUniversal estado ON r.estadoReserva = estado.idCatalogo
+    WHERE r.idReserva = ?;
+  `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, [id], (error, results) => {
       if (error) return reject(error);
@@ -32,6 +64,7 @@ Reserva.create = (data) => {
     INSERT INTO reserva (idHuesped, idHabitacion, fechaEntrada, fechaSalida, estadoReserva)
     VALUES (?, ?, ?, ?, ?)
   `;
+  
   const values = [
     data.idHuesped,
     data.idHabitacion,
