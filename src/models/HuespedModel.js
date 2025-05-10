@@ -26,9 +26,9 @@ Huesped.getAll = () => {
   `;
   
   return new Promise((resolve, reject) => {
-    connection.query(sql, (error, rows) => {
+    connection.query(sql, (error, results) => {
       if (error) return reject(error);
-      resolve(rows);
+      resolve(results);
     });
   });
 };
@@ -57,14 +57,14 @@ Huesped.getById = (id) => {
   `;
 
   return new Promise((resolve, reject) => {
-    connection.query(sql, [id], (error, rows) => {
+    connection.query(sql, [id], (error, results) => {
       if (error) return reject(error);
-      resolve(rows);
+      resolve(results[0] || null);
     });
   });
 };
 
-// Crear huésped
+// Crear nuevo huésped
 Huesped.create = (data) => {
   const sql = `
     INSERT INTO huesped (
@@ -95,7 +95,7 @@ Huesped.create = (data) => {
 };
 
 // Actualizar huésped
-Huesped.update = (data) => {
+Huesped.update = (idHuesped, data) => {
   const sql = `
     UPDATE huesped SET
       primerNombre = ?, segundoNombre = ?, primerApellido = ?, segundoApellido = ?,
@@ -114,7 +114,7 @@ Huesped.update = (data) => {
     data.fechaNacimiento,
     data.generoHuesped,
     data.nacionalidadHuesped,
-    data.idHuesped
+    idHuesped
   ];
 
   return new Promise((resolve, reject) => {

@@ -58,11 +58,19 @@ Servicio.getById = (id) => {
 // Crear un nuevo servicio
 Servicio.create = (data) => {
   const sql = `
-    INSERT INTO servicio (nombreServicio, descripcionServicio)
-    VALUES (?, ?);
+    INSERT INTO servicio (nombreServicio, descripcionServicio, precioServicio, 
+                          tipoServicio, claseServicio, modoPagoServicio)
+    VALUES (?, ?, ?, ?, ?, ?);
   `;
 
-  const values = [data.nombreServicio, data.descripcionServicio];
+  const values = [
+    data.nombreServicio,
+    data.descripcionServicio,
+    data.precioServicio,
+    data.tipoServicio,
+    data.claseServicio,
+    data.modoPagoServicio
+  ];
 
   return new Promise((resolve, reject) => {
     connection.query(sql, values, (error, result) => {
@@ -73,14 +81,23 @@ Servicio.create = (data) => {
 };
 
 // Actualizar un servicio
-Servicio.update = (id, data) => {
+Servicio.update = (idServicio, data) => {
   const sql = `
-    UPDATE servicio
-    SET nombreServicio = ?, descripcionServicio = ?
+    UPDATE servicio 
+    SET nombreServicio = ?, descripcionServicio = ?, precioServicio = ?, 
+        tipoServicio = ?, claseServicio = ?, modoPagoServicio = ? 
     WHERE idServicio = ?;
   `;
 
-  const values = [data.nombreServicio, data.descripcionServicio, id];
+  const values = [
+    data.nombreServicio,
+    data.descripcionServicio,
+    data.precioServicio,
+    data.tipoServicio,
+    data.claseServicio,
+    data.modoPagoServicio,
+    idServicio 
+  ];
 
   return new Promise((resolve, reject) => {
     connection.query(sql, values, (error, result) => {

@@ -10,6 +10,7 @@ CatalogoUniversal.getAll = () => {
     FROM catalogouniversal
     ORDER BY denominacionCatalogo;
   `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, (error, results) => {
       if (error) return reject(error);
@@ -26,6 +27,7 @@ CatalogoUniversal.getByType = (type) => {
     WHERE tipoCatalogo = ?
     ORDER BY denominacionCatalogo;
   `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, [type], (error, results) => {
       if (error) return reject(error);
@@ -41,10 +43,11 @@ CatalogoUniversal.getById = (id) => {
     FROM catalogouniversal
     WHERE idCatalogo = ?;
   `;
+
   return new Promise((resolve, reject) => {
     connection.query(sql, [id], (error, results) => {
       if (error) return reject(error);
-      resolve(results[0] || null); // Devuelve null si no existe
+      resolve(results[0] || null);
     });
   });
 };
@@ -55,7 +58,10 @@ CatalogoUniversal.create = (data) => {
     INSERT INTO catalogouniversal (tipoCatalogo, denominacionCatalogo)
     VALUES (?, ?);
   `;
-  const values = [data.tipoCatalogo, data.denominacionCatalogo];
+  const values = [
+    data.tipoCatalogo, 
+    data.denominacionCatalogo
+  ];
 
   return new Promise((resolve, reject) => {
     connection.query(sql, values, (error, result) => {
@@ -66,18 +72,23 @@ CatalogoUniversal.create = (data) => {
 };
 
 // Actualizar un registro
-CatalogoUniversal.update = (data) => {
+CatalogoUniversal.update = (idCatalogo, data) => {
   const sql = `
     UPDATE catalogouniversal
     SET tipoCatalogo = ?, denominacionCatalogo = ?
     WHERE idCatalogo = ?;
   `;
-  const values = [data.tipoCatalogo, data.denominacionCatalogo, data.idCatalogo];
+
+  const values = [
+    data.tipoCatalogo, 
+    data.denominacionCatalogo, 
+    idCatalogo
+  ];
 
   return new Promise((resolve, reject) => {
     connection.query(sql, values, (error, result) => {
       if (error) return reject(error);
-      resolve({ msg: 'Registro actualizado correctamente', affectedRows: result.affectedRows });
+      resolve({ msg: 'Catalogo actualizado correctamente', affectedRows: result.affectedRows });
     });
   });
 };

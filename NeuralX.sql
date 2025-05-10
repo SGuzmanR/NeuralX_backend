@@ -1,8 +1,3 @@
-DROP DATABASE IF EXISTS neuralx;
-
-CREATE DATABASE neuralx;
-USE neuralx;
-
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `catalogoUniversal` CASCADE;
@@ -18,7 +13,7 @@ CREATE TABLE `catalogoUniversal` (
 	`tipoCatalogo` INT NOT NULL,
 	`denominacionCatalogo` VARCHAR(50) NOT NULL,
 	CONSTRAINT `PK_catalogoUniversal` PRIMARY KEY (`idCatalogo` ASC)
-);
+) Engine InnoDB;
 
 INSERT INTO `catalogoUniversal` 
 (`idCatalogo`, `tipoCatalogo`, `denominacionCatalogo`) 
@@ -77,7 +72,7 @@ VALUES
 (52, 8, 'Cerca al lobby'),
 (53, 9, '1'),
 (54, 9, '2'),
-(55, 9, '+3	'),
+(55, 9, '+3'),
 (56, 10, 'Habitacion Matrimonial'),
 (57, 10, 'Suite'),
 (58, 10, 'Junior Suite'),
@@ -98,22 +93,22 @@ CREATE TABLE `contacto` (
 	`datoContacto` VARCHAR(120) NOT NULL,
 	`tipoContacto` INT NOT NULL,
 	CONSTRAINT `PK_Contactos` PRIMARY KEY (`IdContacto` ASC)
-);
+) Engine InnoDB;
 
 INSERT INTO `contacto` 
 (`idContacto`, `huespedContacto`, `datoContacto`, `tipoContacto`) 
 VALUES
-(1, 1, 'juan.perez@email.com', 85),
-(2, 2, 'maria.gomez@email.com', 85),
-(3, 3, '3111234567', 84),
-(4, 4, 'ana.ramirez@email.com', 85),
-(5, 5, 'luis.torres@email.com', 85),
-(6, 5, 'carlos.ramirez@funcionario.com', 85),
-(7, 5, 'ana.martinez@funcionario.com', 85),
-(8, 3, 'miguel.sanchez@funcionario.com', 85),
-(9, 2, 'laura.garcia@funcionario.com', 85),
-(10, 6, 'sofia.moreno@funcionario.com', 85),
-(11, 6, 'joserondon@gmail.com', 13);
+(1, 1, 'juan.perez@email.com', 66),
+(2, 2, 'maria.gomez@email.com', 66),
+(3, 3, '3111234567', 64),
+(4, 4, 'ana.ramirez@email.com', 66),
+(5, 5, 'luis.torres@email.com', 66),
+(6, 5, 'carlos.ramirez@funcionario.com', 66),
+(7, 5, 'ana.martinez@funcionario.com', 66),
+(8, 3, 'miguel.sanchez@funcionario.com', 66),
+(9, 2, 'laura.garcia@funcionario.com', 66),
+(10, 6, 'sofia.moreno@funcionario.com', 66),
+(11, 6, 'joserondon@gmail.com', 66);
 
 CREATE TABLE `habitacion` (
 	`idHabitacion` INT NOT NULL AUTO_INCREMENT,
@@ -125,10 +120,10 @@ CREATE TABLE `habitacion` (
 	`zonaHabitacion` INT NOT NULL,
 	`disponibilidadHabitacion` BOOL NULL DEFAULT true,
 	CONSTRAINT `PK_Habitacion` PRIMARY KEY (`idHabitacion` ASC)
-);
+) Engine InnoDB;
 
-INSERT INTO habitacion 
-(numeroHabitacion, tipoHabitacion, descripcionHabitacion, capacidadHabitacion, precioHabitacion, zonaHabitacion) 
+INSERT INTO `habitacion`
+(`numeroHabitacion`, `tipoHabitacion`, `descripcionHabitacion`, `capacidadHabitacion`, `precioHabitacion`, `zonaHabitacion`) 
 VALUES 
 ('101', 56, 'Habitación con cama matrimonial, vista al mar', 53, 250000, 50),
 ('102', 57, 'Suite con jacuzzi y terraza', 54, 480000, 52),
@@ -147,10 +142,10 @@ CREATE TABLE `habitacionXservicios` (
 	`idServicio` INT NOT NULL,
 	`cantidad` INT NULL DEFAULT 1,
 	CONSTRAINT `PK_habitacionXservicios` PRIMARY KEY (`IdServicioHabitacion` ASC)
-);
+) Engine InnoDB;
 
-INSERT INTO habitacionXservicios 
-(idHabitacion, idServicio, cantidad) 
+INSERT INTO `habitacionXservicios` 
+(`idHabitacion`, `idServicio`, `cantidad`) 
 VALUES
 (1, 1, 1),
 (1, 3, 1),
@@ -175,7 +170,7 @@ CREATE TABLE `huesped` (
 	`generoHuesped` INT NOT NULL,
 	`nacionalidadHuesped` INT NOT NULL,
 	CONSTRAINT `PK_Huesped` PRIMARY KEY (`idHuesped` ASC)
-);
+) Engine InnoDB;
 
 INSERT INTO `huesped` 
 (`IdHuesped`, `primerNombre`, `segundoNombre`, `primerApellido`, `segundoApellido`, `tipoDocumento`, `numeroDocumento`, `fechaNacimiento`, `generoHuesped`, `nacionalidadHuesped`) 
@@ -196,10 +191,10 @@ CREATE TABLE `reserva` (
 	`fechaSalida` DATE NOT NULL,
 	`estadoReserva` INT NOT NULL,
 	CONSTRAINT `PK_Reservas` PRIMARY KEY (`idReserva` ASC)
-);
+) Engine InnoDB;
 
-INSERT INTO reserva 
-(idHuesped, idHabitacion, fechaEntrada, fechaSalida, estadoReserva) 
+INSERT INTO `reserva` 
+(`idHuesped`, `idHabitacion`, `fechaEntrada`, `fechaSalida`, `estadoReserva`) 
 VALUES
 (1, 1, '2025-05-15', '2025-05-20', 30),
 (2, 2, '2025-06-01', '2025-06-05', 31),
@@ -221,10 +216,10 @@ CREATE TABLE `servicio` (
 	`claseServicio` INT NOT NULL,
 	`modoPagoServicio` INT NOT NULL,
 	CONSTRAINT `PK_Servicio` PRIMARY KEY (`idServicio` ASC)
-);
+) Engine InnoDB;
 
-INSERT INTO servicio 
-(nombreServicio, descripcionServicio, precioServicio, tipoServicio, claseServicio, modoPagoServicio) 
+INSERT INTO `servicio`
+(`nombreServicio`, `descripcionServicio`, `precioServicio`, `tipoServicio`, `claseServicio`, `modoPagoServicio`) 
 VALUES
 ('Alojamiento Básico', 'Incluye cama, baño y desayuno', 200000, 46, 42, 35),
 ('Tour Guiado al Centro Histórico', 'Recorrido guiado por la ciudad', 150000, 47, 43, 39),
@@ -351,187 +346,3 @@ ALTER TABLE `servicio`
 	FOREIGN KEY (`modoPagoServicio`) REFERENCES `catalogoUniversal` (`idCatalogo`) ON DELETE Restrict ON UPDATE Cascade;
 
 SET FOREIGN_KEY_CHECKS=1;
-
-
-
--- HUESPED
--- ALL
-SELECT 
-  h.idHuesped,
-  h.primerNombre, 
-  h.segundoNombre, 
-  h.primerApellido, 
-  h.segundoApellido, 
-  doc.denominacionCatalogo AS tipoDocumento, 
-  h.numeroDocumento, 
-  h.fechaNacimiento, 
-  gen.denominacionCatalogo AS generoHuesped, 
-  nac.denominacionCatalogo AS nacionalidadHuesped
-FROM 
-  huesped h
-INNER JOIN catalogoUniversal doc ON h.tipoDocumento = doc.idCatalogo
-INNER JOIN catalogoUniversal gen ON h.generoHuesped = gen.idCatalogo
-INNER JOIN catalogoUniversal nac ON h.nacionalidadHuesped = nac.idCatalogo
-ORDER BY h.primerApellido, h.primerNombre;
--- ID
-SELECT 
-  h.idHuesped,
-  h.primerNombre, 
-  h.segundoNombre, 
-  h.primerApellido, 
-  h.segundoApellido, 
-  doc.denominacionCatalogo AS tipoDocumento, 
-  h.numeroDocumento, 
-  h.fechaNacimiento, 
-  gen.denominacionCatalogo AS generoHuesped, 
-  nac.denominacionCatalogo AS nacionalidadHuesped
-FROM 
-  huesped h
-INNER JOIN catalogoUniversal doc ON h.tipoDocumento = doc.idCatalogo
-INNER JOIN catalogoUniversal gen ON h.generoHuesped = gen.idCatalogo
-INNER JOIN catalogoUniversal nac ON h.nacionalidadHuesped = nac.idCatalogo
-WHERE 
-  h.idHuesped = ?;
-
--- RESERVA
--- ALL
-SELECT 
-  r.idReserva,
-  CONCAT(h.primerNombre, ' ', h.segundoNombre, ' ', h.primerApellido, ' ', h.segundoApellido) AS nombreHuesped,
-  hab.numeroHabitacion,
-  r.fechaReserva,
-  r.fechaEntrada,
-  r.fechaSalida,
-  estado.denominacionCatalogo AS estadoReserva
-FROM 
-  reserva r
-INNER JOIN huesped h ON r.idHuesped = h.idHuesped
-INNER JOIN habitacion hab ON r.idHabitacion = hab.idHabitacion
-INNER JOIN catalogoUniversal estado ON r.estadoReserva = estado.idCatalogo
-ORDER BY r.fechaReserva DESC;
--- ID
-SELECT 
-  r.idReserva,
-  CONCAT(h.primerNombre, ' ', h.segundoNombre, ' ', h.primerApellido, ' ', h.segundoApellido) AS nombreHuesped,
-  hab.numeroHabitacion,
-  r.fechaReserva,
-  r.fechaEntrada,
-  r.fechaSalida,
-  estado.denominacionCatalogo AS estadoReserva
-FROM 
-  reserva r
-INNER JOIN huesped h ON r.idHuesped = h.idHuesped
-INNER JOIN habitacion hab ON r.idHabitacion = hab.idHabitacion
-INNER JOIN catalogoUniversal estado ON r.estadoReserva = estado.idCatalogo
-WHERE r.idReserva = ?;
-
--- SERVICIO
--- ALL
-SELECT 
-  s.idServicio,
-  s.nombreServicio,
-  s.descripcionServicio,
-  tipo.denominacionCatalogo AS tipoServicio,
-  clase.denominacionCatalogo AS claseServicio,
-  pago.denominacionCatalogo AS modoPagoServicio,
-  s.precioServicio
-FROM servicio s
-INNER JOIN catalogoUniversal tipo ON s.tipoServicio = tipo.idCatalogo
-INNER JOIN catalogoUniversal clase ON s.claseServicio = clase.idCatalogo
-INNER JOIN catalogoUniversal pago ON s.modoPagoServicio = pago.idCatalogo
-ORDER BY s.nombreServicio;
--- ID
-SELECT 
-  s.idServicio,
-  s.nombreServicio,
-  s.descripcionServicio,
-  tipo.denominacionCatalogo AS tipoServicio,
-  clase.denominacionCatalogo AS claseServicio,
-  pago.denominacionCatalogo AS modoPagoServicio,
-  s.precioServicio
-FROM servicio s
-INNER JOIN catalogoUniversal tipo ON s.tipoServicio = tipo.idCatalogo
-INNER JOIN catalogoUniversal clase ON s.claseServicio = clase.idCatalogo
-INNER JOIN catalogoUniversal pago ON s.modoPagoServicio = pago.idCatalogo
-WHERE s.idServicio = ?;
-
--- HABITACIONXSERVICIOS
--- ALL
-SELECT 
-  hxs.IdServicioHabitacion,
-  hxs.idHabitacion,
-  hxs.idServicio,
-  hxs.cantidad,
-  hab.numeroHabitacion,
-  ser.nombreServicio
-FROM habitacionXservicios hxs
-INNER JOIN habitacion hab ON hxs.idHabitacion = hab.idHabitacion
-INNER JOIN servicio ser ON hxs.idServicio = ser.idServicio
-ORDER BY hxs.IdServicioHabitacion;
--- ID
-SELECT 
-  hxs.IdServicioHabitacion,
-  hxs.idHabitacion,
-  hxs.idServicio,
-  hxs.cantidad,
-  hab.numeroHabitacion,
-  ser.nombreServicio
-FROM habitacionXservicios hxs
-INNER JOIN habitacion hab ON hxs.idHabitacion = hab.idHabitacion
-INNER JOIN servicio ser ON hxs.idServicio = ser.idServicio
-WHERE hxs.IdServicioHabitacion = ?;
-
--- HABITACION
--- ALL
-SELECT 
-  h.idHabitacion,
-  h.numeroHabitacion,
-  tipo.denominacionCatalogo AS tipoHabitacion,
-  h.descripcionHabitacion,
-  capacidad.denominacionCatalogo AS capacidadHabitacion,
-  h.precioHabitacion,
-  zona.denominacionCatalogo AS zonaHabitacion,
-  h.disponibilidadHabitacion
-FROM habitacion h
-INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
-INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
-INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
-ORDER BY h.numeroHabitacion;
--- ID
-SELECT 
-  h.idHabitacion,
-  h.numeroHabitacion,
-  tipo.denominacionCatalogo AS tipoHabitacion,
-  h.descripcionHabitacion,
-  capacidad.denominacionCatalogo AS capacidadHabitacion,
-  h.precioHabitacion,
-  zona.denominacionCatalogo AS zonaHabitacion,
-  h.disponibilidadHabitacion
-FROM habitacion h
-INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
-INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
-INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
-WHERE h.idHabitacion = ?;
-
--- CONTACTO
--- ALL
-SELECT 
-  c.idContacto,
-  c.huespedContacto,
-  c.datoContacto,
-  tipo.denominacionCatalogo AS tipoContacto
-FROM 
-  contacto c
-LEFT JOIN 
-  catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
-ORDER BY 
-  c.idContacto;
--- ID
-SELECT 
-  c.idContacto,
-  c.huespedContacto,
-  c.datoContacto,
-  tipo.denominacionCatalogo AS tipoContacto
-FROM contacto c
-INNER JOIN catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
-WHERE c.idContacto = ?;

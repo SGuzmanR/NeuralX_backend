@@ -46,7 +46,7 @@ HabitacionXServicios.getById = (id) => {
   return new Promise((resolve, reject) => {
     connection.query(sql, [id], (error, results) => {
       if (error) return reject(error);
-      resolve(results[0] || null); // Retorna null si no encuentra nada
+      resolve(results[0] || null);
     });
   });
 };
@@ -76,18 +76,18 @@ HabitacionXServicios.create = (data) => {
 };
 
 // Actualizar un HabitacionesXServicio
-HabitacionXServicios.update = (id, data) => {
+HabitacionXServicios.update = (idServicioHabitacion, data) => {
   const sql = `
     UPDATE habitacionXservicios
     SET idHabitacion = ?, idServicio = ?, cantidad = ?
-    WHERE IdServicioHabitacion = ?;
+    WHERE idServicioHabitacion = ?;
   `;
 
   const values = [
     data.idHabitacion,
     data.idServicio,
     data.cantidad,
-    id
+    idServicioHabitacion
   ];
 
   return new Promise((resolve, reject) => {

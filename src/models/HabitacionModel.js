@@ -16,9 +16,12 @@ Habitacion.getAll = () => {
       zona.denominacionCatalogo AS zonaHabitacion,
       h.disponibilidadHabitacion
     FROM habitacion h
-    INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
-    INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
-    INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
+    JOIN catalogoUniversal tipo 
+        ON h.tipoHabitacion = tipo.idCatalogo AND tipo.tipoCatalogo = 10
+    JOIN catalogoUniversal capacidad 
+        ON h.capacidadHabitacion = capacidad.idCatalogo AND capacidad.tipoCatalogo = 9
+    JOIN catalogoUniversal zona 
+        ON h.zonaHabitacion = zona.idCatalogo AND zona.tipoCatalogo = 8
     ORDER BY h.numeroHabitacion;
   `;
 
@@ -43,10 +46,13 @@ Habitacion.getById = (id) => {
       zona.denominacionCatalogo AS zonaHabitacion,
       h.disponibilidadHabitacion
     FROM habitacion h
-    INNER JOIN catalogoUniversal tipo ON h.tipoHabitacion = tipo.idCatalogo
-    INNER JOIN catalogoUniversal capacidad ON h.capacidadHabitacion = capacidad.idCatalogo
-    INNER JOIN catalogoUniversal zona ON h.zonaHabitacion = zona.idCatalogo
-    WHERE h.idHabitacion = ?;
+    JOIN catalogoUniversal tipo 
+        ON h.tipoHabitacion = tipo.idCatalogo AND tipo.tipoCatalogo = 10
+    JOIN catalogoUniversal capacidad 
+        ON h.capacidadHabitacion = capacidad.idCatalogo AND capacidad.tipoCatalogo = 9
+    JOIN catalogoUniversal zona 
+        ON h.zonaHabitacion = zona.idCatalogo AND zona.tipoCatalogo = 8
+      WHERE h.idHabitacion = ?;
   `;
 
   return new Promise((resolve, reject) => {
@@ -90,7 +96,7 @@ Habitacion.create = (data) => {
 };
 
 // Actualizar una habitación
-Habitacion.update = (id, data) => {
+Habitacion.update = (idHabitacion, data) => {
   const sql = `
     UPDATE habitacion SET
       numeroHabitacion = ?,
@@ -111,7 +117,7 @@ Habitacion.update = (id, data) => {
     data.precioHabitacion,
     data.zonaHabitacion,
     data.disponibilidadHabitacion,
-    id
+    idHabitacion
   ];
 
   return new Promise((resolve, reject) => {

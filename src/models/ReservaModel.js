@@ -23,9 +23,9 @@ Reserva.getAll = () => {
   `;
 
   return new Promise((resolve, reject) => {
-    connection.query(sql, (error, rows) => {
+    connection.query(sql, (error, results) => {
       if (error) return reject(error);
-      resolve(rows);
+      resolve(results);
     });
   });
 };
@@ -52,8 +52,7 @@ Reserva.getById = (id) => {
   return new Promise((resolve, reject) => {
     connection.query(sql, [id], (error, results) => {
       if (error) return reject(error);
-      if (results.length === 0) return resolve(null);
-      resolve(results[0]);
+      resolve(results[0] || null);
     });
   });
 };
@@ -82,52 +81,27 @@ Reserva.create = (data) => {
 };
 
 // Actualizar una reserva
-Reserva.update = (id, data) => {
-  const fieldsToUpdate = [];
-  const values = [];
-
-  if (data.idHuesped) {
-    fieldsToUpdate.push('idHuesped = ?');
-    values.push(data.idHuesped);
-  }
-  if (data.idHabitacion) {
-    fieldsToUpdate.push('idHabitacion = ?');
-    values.push(data.idHabitacion);
-  }
-  if (data.fechaEntrada) {
-    fieldsToUpdate.push('fechaEntrada = ?');
-    values.push(data.fechaEntrada);
-  }
-  if (data.fechaSalida) {
-    fieldsToUpdate.push('fechaSalida = ?');
-    values.push(data.fechaSalida);
-  }
-  if (data.estadoReserva) {
-    fieldsToUpdate.push('estadoReserva = ?');
-    values.push(data.estadoReserva);
-  }
-
-  if (fieldsToUpdate.length === 0) {
-    return Promise.reject('No se proporcionaron datos para actualizar.');
-  }
-
-  values.push(id);
-
+Reserva.update = (idReserva, data) => {
   const sql = `
     UPDATE reserva
-    SET ${fieldsToUpdate.join(', ')}
-    WHERE idReserva = ?
+    SET idHuesped = ?, idHabitacion = ?, fechaEntrada = ?, fechaSalida = ?, estadoReserva = ?
+    WHERE idReserva = ?;
   `;
+
+  const values = [
+    data.idHuesped,
+    data.idHabitacion,
+    data.fechaEntrada,
+    data.fechaSalida,
+    data.estadoReserva,
+    idReserva
+  ];
 
   return new Promise((resolve, reject) => {
     connection.query(sql, values, (error, result) => {
       if (error) return reject(error);
-      
-      if (result.affectedRows === 0) {
-        return reject('Reserva no encontrada');
-      }
-
-      resolve(result);
+      if (result.affectedRows === 0) return reject('Reserva no encontrada');
+      resolve({ msg: 'Registro actualizado correctamente', affectedRows: result.affectedRows });
     });
   });
 };

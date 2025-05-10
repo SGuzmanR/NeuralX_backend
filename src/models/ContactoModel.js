@@ -8,15 +8,17 @@ Contacto.getAll = () => {
    const sql = `
     SELECT 
     c.idContacto,
-    c.huespedContacto,
+    CONCAT(h.primerNombre, ' ', IFNULL(h.segundoNombre, ''), ' ', h.primerApellido, ' ', IFNULL(h.segundoApellido, '')) AS nombreHuesped,
     c.datoContacto,
     tipo.denominacionCatalogo AS tipoContacto
     FROM 
-      contacto c
+        contacto c
+    INNER JOIN 
+        huesped h ON c.huespedContacto = h.idHuesped
     LEFT JOIN 
-      catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
+        catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
     ORDER BY 
-      c.idContacto;
+        c.idContacto;
   `;
 
   return new Promise((resolve, reject) => {
@@ -31,12 +33,16 @@ Contacto.getAll = () => {
 Contacto.getById = (id) => {
   const sql = `
     SELECT 
-      c.idContacto,
-      c.huespedContacto,
-      c.datoContacto,
-      tipo.denominacionCatalogo AS tipoContacto
-    FROM contacto c
-    INNER JOIN catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
+    c.idContacto,
+    CONCAT(h.primerNombre, ' ', IFNULL(h.segundoNombre, ''), ' ', h.primerApellido, ' ', IFNULL(h.segundoApellido, '')) AS nombreHuesped,
+    c.datoContacto,
+    tipo.denominacionCatalogo AS tipoContacto
+    FROM 
+        contacto c
+    INNER JOIN 
+        huesped h ON c.huespedContacto = h.idHuesped
+    LEFT JOIN 
+        catalogoUniversal tipo ON c.tipoContacto = tipo.idCatalogo
     WHERE c.idContacto = ?;
   `;
 
@@ -55,7 +61,11 @@ Contacto.create = (data) => {
     VALUES (?, ?, ?);
   `;
 
-  const values = [data.huespedContacto, data.datoContacto, data.tipoContacto];
+  const values = [
+    data.huespedContacto, 
+    data.datoContacto, 
+    data.tipoContacto
+  ];
 
   return new Promise((resolve, reject) => {
     connection.query(sql, values, (error, result) => {
@@ -66,7 +76,7 @@ Contacto.create = (data) => {
 };
 
 // Actualizar un contacto
-Contacto.update = (data) => {
+Contacto.update = (idContacto, data) => {
   const sql = `
     UPDATE contacto
     SET huespedContacto = ?, datoContacto = ?, tipoContacto = ?
@@ -77,7 +87,7 @@ Contacto.update = (data) => {
     data.huespedContacto,
     data.datoContacto,
     data.tipoContacto,
-    data.idContacto
+    idContacto
   ];
 
   return new Promise((resolve, reject) => {
