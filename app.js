@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 import connectDatabase from './src/conexion/index.js';
 import CataUniversalRoute from './src/routes/CataUniversalRoute.js';
@@ -27,18 +28,19 @@ connectDatabase();
 
 app.set('PORT', PORT);
 
+// Configurar body-parser para manejar JSON y datos codificados
 app.use(bodyParser.json({ type: 'application/json', limit: "10mb"}))
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
+app.use(cors({
+  origin: 'http://localhost:4200', // Especifica el origen de tu frontend (puede ser más genérico)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'X-Requested-With'], // Encabezados permitidos
+  credentials: true // Si es necesario para enviar cookies entre dominios
+}));
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ROUTES
 app.use('/CatalogoUniversal', CataUniversalRoute);
