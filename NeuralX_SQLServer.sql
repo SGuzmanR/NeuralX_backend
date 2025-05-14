@@ -97,7 +97,8 @@ VALUES
 ('Pedro', 'Ignacio', 'López', 'Martínez', 14, '1122334455', '1992-03-15', 24, 22),
 ('Ana', 'Carolina', 'Ramírez', 'Aroca', 17, '5566778899', '1995-12-01', 25, 19),
 ('Luis', 'Mauro', 'Torres', 'García', 16, '6677889900', '1988-07-19', 24, 23),
-('Jose', 'Maria', 'Rondon', 'Diaz', 14, '3222623535', '2005-04-25', 24, 21);
+('Jose', 'Maria', 'Rondon', 'Diaz', 14, '3222623535', '2005-04-25', 24, 21),
+('Jose', 'Luis', 'Rondon', '', 12, '522987321', '2001-04-01', 25, 21);
 
 CREATE TABLE contacto (
     idContacto INT IDENTITY(1,1) PRIMARY KEY,
@@ -451,6 +452,7 @@ BEGIN
     RETURN DATEDIFF(YEAR, @fechaNacimiento, GETDATE());
 END;
 -- EXECUTE SVF
+SELECT dbo.EdadHuesped('1992-03-15') AS Edad;
 
 -- 2
 CREATE FUNCTION DiasReserva (@fechaEntrada DATE, @fechaSalida DATE)
@@ -460,6 +462,7 @@ BEGIN
     RETURN DATEDIFF(DAY, @fechaEntrada, @fechaSalida);
 END;
 -- EXECUTE SVF
+SELECT dbo.DiasReserva('2025-05-10', '2025-05-14') AS DiasDeReserva;
 
 -- 3
 CREATE FUNCTION PrecioTotalReserva (@idReserva INT)
@@ -474,6 +477,7 @@ BEGIN
     RETURN @precioTotal;
 END;
 -- EXECUTE SVF
+SELECT dbo.PrecioTotalReserva(1) AS PrecioTotal;
 
 -- 4
 CREATE FUNCTION DiasUltimaReserva (@idHuesped INT)
@@ -488,6 +492,7 @@ BEGIN
     RETURN DATEDIFF(DAY, @ultimoDiaReserva, GETDATE());
 END;
 -- EXECUTE SVF
+SELECT dbo.DiasUltimaReserva(2) AS UltimoDiaReserva;
 
 -- 5
 CREATE FUNCTION NumeroServiciosHabitacion (@idHabitacion INT)
@@ -502,6 +507,7 @@ BEGIN
     RETURN @numeroServicios;
 END;
 -- EXECUTE SVF
+SELECT dbo.NumeroServiciosHabitacion(4) AS NumeroServicios;
 
 -- 6
 CREATE FUNCTION EstadoReservaPorId (@idReserva INT)
@@ -517,6 +523,8 @@ BEGIN
     RETURN @estadoReserva;
 END;
 -- EXECUTE SVF
+SELECT dbo.EstadoReservaPorId(1) AS EstadoReserva;
+
 
 
 -- TABLE FUNCTIONS
@@ -528,6 +536,7 @@ RETURN
     SELECT * FROM reserva 
     WHERE estadoReserva = @estado;
 -- EXECUTE TABLE
+SELECT * FROM dbo.ReservasPorEstado(28);
 
 -- 2
 CREATE FUNCTION HuespedesPorNacionalidad (@nacionalidad INT)
@@ -538,6 +547,7 @@ RETURN
     FROM huesped
     WHERE nacionalidadHuesped = @nacionalidad;
 -- EXECUTE TABLE
+SELECT * FROM HuespedesPorNacionalidad(18);
 
 -- 3
 CREATE FUNCTION ServiciosPorHabitacion (@idHabitacion INT)
@@ -548,6 +558,8 @@ RETURN
     FROM habitacionXservicios hs
     JOIN servicio s ON hs.idServicio = s.idServicio
     WHERE hs.idHabitacion = @idHabitacion;
+-- EXECUTE TABLE
+SELECT * FROM ServiciosPorHabitacion(2);
 
 -- 4
 CREATE FUNCTION ReservasPorFecha (@fechaInicio DATE, @fechaFin DATE)
@@ -556,6 +568,8 @@ AS
 RETURN
     SELECT * FROM reserva
     WHERE fechaEntrada BETWEEN @fechaInicio AND @fechaFin;
+-- EXECUTE TABLE
+SELECT * FROM ReservasPorFecha('2025-01-01', '2025-12-31');
 
 -- 5
 CREATE FUNCTION HuespedesConHabitacionesDisponibles()
@@ -567,6 +581,8 @@ RETURN
     JOIN reserva r ON h.idHuesped = r.idHuesped
     JOIN habitacion ha ON r.idHabitacion = ha.idHabitacion
     WHERE ha.disponibilidadHabitacion = 1;
+-- EXECUTE TABLE
+SELECT * FROM HuespedesConHabitacionesDisponibles();
 
 -- 6
 CREATE FUNCTION HabitacionesPorServicio (@idServicio INT)
@@ -577,6 +593,8 @@ RETURN
     FROM habitacionXservicios hs
     JOIN habitacion h ON hs.idHabitacion = h.idHabitacion
     WHERE hs.idServicio = @idServicio;
+-- EXECUTE TABLE
+SELECT * FROM HabitacionesPorServicio(1);
 
 
 
@@ -589,6 +607,10 @@ AS
 BEGIN
     PRINT 'Nueva reserva registrada';
 END;
+-- TEST TRIGGER
+INSERT INTO reserva 
+(idHuesped, idHabitacion, fechaEntrada, fechaSalida, estadoReserva)
+VALUES (4, 5, '2025-05-10', '2025-05-27', 30);
 
 -- 2
 CREATE TRIGGER tr_ActualizarDisponibilidadHabitacion
@@ -600,6 +622,12 @@ BEGIN
     SET disponibilidadHabitacion = 0
     WHERE idHabitacion IN (SELECT idHabitacion FROM inserted);
 END;
+-- TEST TRIGGER
+SELECT idHabitacion, disponibilidadHabitacion FROM habitacion;
+INSERT INTO reserva 
+(idHuesped, idHabitacion, fechaEntrada, fechaSalida, estadoReserva)
+VALUES (2, 9, '2025-05-10', '2025-05-27', 30);
+SELECT idHabitacion, disponibilidadHabitacion FROM habitacion;
 
 -- 3
 CREATE TRIGGER tr_AuditoriaEstadoReserva
@@ -612,6 +640,10 @@ BEGIN
         PRINT 'El estado de la reserva ha cambiado';
     END
 END;
+-- TEST TRIGGER
+UPDATE reserva
+SET estadoReserva = 31
+WHERE idReserva = 1;
 
 -- 4
 CREATE TRIGGER tr_ActualizarPrecioReserva
@@ -631,6 +663,16 @@ BEGIN
         WHERE idReserva IN (SELECT idReserva FROM inserted);
     END
 END;
+-- TEST TRIGGER
+SELECT idHuesped, idHabitacion, fechaEntrada, fechaSalida, estadoReserva FROM reserva;
+SELECT numeroHabitacion, tipoHabitacion, descripcionHabitacion, capacidadHabitacion, precioHabitacion, zonaHabitacion FROM habitacion;
+
+UPDATE reserva
+SET idHabitacion = 2
+WHERE idReserva = 1;
+
+SELECT idHuesped, idHabitacion, fechaEntrnumeroHabitacion, tipoHabitacion, descripcionHabitacion, capacidadHabitacion, precioHabitacion, zonaHabitacionada, fechaSalida, estadoReserva FROM reserva;
+SELECT  FROM habitacion;
 
 -- 5
 CREATE TRIGGER tr_AuditoriaHuespedes
@@ -640,6 +682,11 @@ AS
 BEGIN
     PRINT 'Nuevo huesped registrado';
 END;
+-- TEST TRIGGER
+INSERT INTO huesped
+(primerNombre, segundoNombre, primerApellido, segundoApellido, tipoDocumento, numeroDocumento, fechaNacimiento, generoHuesped, nacionalidadHuesped) 
+VALUES
+('Diego', '', 'JImenez', '', 12, '1234908', '1999-03-11', 24, 18);
 
 -- 6
 CREATE TRIGGER tr_AuditoriaDisponibilidadHabitacion
@@ -652,3 +699,11 @@ BEGIN
         PRINT 'La disponibilidad de la habitación ha cambiado';
     END
 END;
+-- TEST TRIGGER
+SELECT idHabitacion, disponibilidadHabitacion FROM habitacion;
+
+UPDATE habitacion
+SET disponibilidadHabitacion = 0
+WHERE idHabitacion = 1;
+
+SELECT idHabitacion, disponibilidadHabitacion FROM habitacion;
