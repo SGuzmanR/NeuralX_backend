@@ -169,18 +169,22 @@ CREATE TABLE `huesped` (
 	`fechaNacimiento` DATE NOT NULL,
 	`generoHuesped` INT NOT NULL,
 	`nacionalidadHuesped` INT NOT NULL,
+    `contraseñaHuesped` VARCHAR(250) NOT NULL,
+    `emailHuesped` VARCHAR(250) NOT NULL UNIQUE,
 	CONSTRAINT `PK_Huesped` PRIMARY KEY (`idHuesped` ASC)
 ) Engine InnoDB;
 
 INSERT INTO `huesped` 
-(`IdHuesped`, `primerNombre`, `segundoNombre`, `primerApellido`, `segundoApellido`, `tipoDocumento`, `numeroDocumento`, `fechaNacimiento`, `generoHuesped`, `nacionalidadHuesped`) 
+(`idHuesped`, `primerNombre`, `segundoNombre`, `primerApellido`, `segundoApellido`, 
+ `tipoDocumento`, `numeroDocumento`, `fechaNacimiento`, `generoHuesped`, `nacionalidadHuesped`, 
+ `contraseñaHuesped`, `emailHuesped`) 
 VALUES
-(1, 'Juan', 'Santiago', 'Pérez', 'Alfonzo', 14, '1234567890', '1990-05-10', 24, 18),
-(2, 'María', 'Luisa', 'Gómez', 'Ríos', 15, '9876543210', '1985-08-22', 25, 20),
-(3, 'Pedro', 'Ignacio', 'López', 'Martínez', 14, '1122334455', '1992-03-15', 24, 22),
-(4, 'Ana', 'Carolina', 'Ramírez', 'Aroca', 17, '5566778899', '1995-12-01', 25, 19),
-(5, 'Luis', 'Mauro', 'Torres', 'García', 16, '6677889900', '1988-07-19', 24, 23),
-(6, 'Jose', 'Maria', 'Rondon', 'Diaz', 14, '3222623535', '2005-04-25', 24, 21);
+(1, 'Juan', 'Santiago', 'Pérez', 'Alfonzo', 14, '1234567890', '1990-05-10', 24, 18, '1234', 'juan@example.com'),
+(2, 'María', 'Luisa', 'Gómez', 'Ríos', 15, '9876543210', '1985-08-22', 25, 20, '1234', 'maria@example.com'),
+(3, 'Pedro', 'Ignacio', 'López', 'Martínez', 14, '1122334455', '1992-03-15', 24, 22, '1234', 'pedro@example.com'),
+(4, 'Ana', 'Carolina', 'Ramírez', 'Aroca', 17, '5566778899', '1995-12-01', 25, 19, '1234', 'ana@example.com'),
+(5, 'Luis', 'Mauro', 'Torres', 'García', 16, '6677889900', '1988-07-19', 24, 23, '1234', 'luis@example.com'),
+(6, 'Jose', 'Maria', 'Rondon', 'Diaz', 14, '3222623535', '2005-04-25', 24, 21, '1234', 'jose@example.com');
 
 CREATE TABLE `reserva` (
 	`idReserva` INT NOT NULL AUTO_INCREMENT,

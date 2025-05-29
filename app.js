@@ -6,8 +6,11 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import connectDatabase from './src/conexion/index.js';
+import authMiddleware from './src/middleware/authMiddleware.js';
+import AuthRoute from './src/routes/AuthRoute.js';
 import CataUniversalRoute from './src/routes/CataUniversalRoute.js';
 import HuespedRoute from './src/routes/HuespedRoute.js';
 import ReservaRoute from './src/routes/ReservaRoute.js';
@@ -32,24 +35,28 @@ app.set('PORT', PORT);
 app.use(bodyParser.json({ type: 'application/json', limit: "10mb"}))
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// COOKIES
+app.use(cookieParser());
+
 // CORS
 app.use(cors({
-  origin: 'http://localhost:4200', // Especifica el origen de tu frontend (puede ser más genérico)
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'X-Requested-With'], // Encabezados permitidos
-  credentials: true // Si es necesario para enviar cookies entre dominios
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-Requested-With'],
+  credentials: true
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ROUTES
+app.use('/Auth', AuthRoute);
 app.use('/CatalogoUniversal', CataUniversalRoute);
-app.use('/Huesped', HuespedRoute);
-app.use('/Reserva', ReservaRoute);
-app.use('/Servicio', ServicioRoute);
-app.use('/Habitacion', HabitacionRoute);
-app.use('/HabitacionXServicio', HabitacionXServiciosRoute);
-app.use('/Contacto', ContactoRoute);
+app.use('/Huesped', authMiddleware, HuespedRoute);
+app.use('/Reserva', authMiddleware, ReservaRoute);
+app.use('/Servicio', authMiddleware, ServicioRoute);
+app.use('/Habitacion', authMiddleware, HabitacionRoute);
+app.use('/HabitacionXServicio', authMiddleware, HabitacionXServiciosRoute);
+app.use('/Contacto', authMiddleware, ContactoRoute);
 
 // MIDDLEWARE ERROR HANDLING
 app.use((err, req, res, next) => {

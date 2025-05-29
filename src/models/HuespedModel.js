@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt';
+
 import connectDatabase from '../conexion/index.js';
 
 const connection = connectDatabase();
@@ -65,14 +67,16 @@ Huesped.getById = (id) => {
 };
 
 // Crear nuevo huésped
-Huesped.create = (data) => {
+Huesped.create = async (data) => {
   const sql = `
     INSERT INTO huesped (
       primerNombre, segundoNombre, primerApellido, segundoApellido,
       tipoDocumento, numeroDocumento, fechaNacimiento,
-      generoHuesped, nacionalidadHuesped
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+      generoHuesped, nacionalidadHuesped, emailHuesped, contraseñaHuesped
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `;
+
+  const hashedPassword = await bcrypt.hash(data.password, 10);
 
   const values = [
     data.primerNombre,
@@ -83,7 +87,9 @@ Huesped.create = (data) => {
     data.numeroDocumento,
     data.fechaNacimiento,
     data.generoHuesped,
-    data.nacionalidadHuesped
+    data.nacionalidadHuesped,
+    data.emailHuesped,
+    hashedPassword
   ];
 
   return new Promise((resolve, reject) => {
