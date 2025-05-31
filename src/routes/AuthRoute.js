@@ -7,6 +7,33 @@ const connection = connectDatabase();
 const router = express.Router();
 const JWT_SECRET = process.env.JWT;
 
+router.get('/me', (req, res) => {
+  const token = req.cookies?.token;
+
+  if (!token) return res.status(401).json({ msg: 'No autenticado' });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const sql = 'SELECT idHuesped, primerNombre, primerApellido, emailHuesped FROM huesped WHERE idHuesped = ?';
+
+    connection.query(sql, [decoded.idHuesped], (err, results) => {
+      if (err) return res.status(500).json({ msg: 'Error del servidor' });
+      if (results.length === 0) return res.status(404).json({ msg: 'Usuario no encontrado' });
+
+      const user = results[0];
+      res.json({
+        user: {
+          idHuesped: user.idHuesped,
+          nombre: `${user.primerNombre} ${user.primerApellido}`,
+          email: user.emailHuesped,
+        }
+      });
+    });
+  } catch (err) {
+    return res.status(403).json({ msg: 'Token inválido' });
+  }
+});
+
 router.post('/ingresar', (req, res) => {
   const { email, password } = req.body;
 
